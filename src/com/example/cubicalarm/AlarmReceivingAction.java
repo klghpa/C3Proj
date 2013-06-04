@@ -14,6 +14,10 @@ public class AlarmReceivingAction extends BroadcastReceiver {
 		 Intent intent2 = new Intent(  context, AlarmReceiverActivity.class ); 
 		 intent2.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); 
 		 context.startActivity(intent2); 
+		 
+		 MainActivity mainActivity = (MainActivity)context; 
+		 mainActivity.setAlarm( mainActivity.am , mainActivity.sender, mainActivity.arrayList ); 
+		 
 		 }
 		 catch(Exception e)
 		 {

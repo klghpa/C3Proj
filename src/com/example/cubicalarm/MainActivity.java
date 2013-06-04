@@ -16,6 +16,10 @@ import android.util.Log;
 import android.view.Menu;
 
 public class MainActivity extends Activity {
+	
+	public ArrayList<Calendar> arrayList; 
+	public AlarmManager am; 
+	public PendingIntent sender; 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,51 +31,57 @@ public class MainActivity extends Activity {
         Calendar cal = Calendar.getInstance(); 
         
         Log.v("dbm" , "MainActivity on Start: " + dateFormat.format(cal.getTime()) ); 
-        ArrayList<Date> arrayList = new ArrayList<Date>(); 
+        arrayList = new ArrayList<Calendar>(); 
         cal.add(Calendar.SECOND, 5); 
-        arrayList.add(cal.getTime()); 
+        arrayList.add((Calendar)cal.clone()); 
         cal.add(Calendar.SECOND, 5); 
-        arrayList.add(cal.getTime()); 
+        arrayList.add((Calendar)cal.clone()); 
         cal.add(Calendar.SECOND, 5); 
-        arrayList.add(cal.getTime()); 
+        arrayList.add((Calendar)cal.clone()); 
         cal.add(Calendar.SECOND, 5); 
-        arrayList.add(cal.getTime()); 
+        arrayList.add((Calendar)cal.clone()); 
         cal.add(Calendar.SECOND, 5); 
-        arrayList.add(cal.getTime()); 
-        
-        
+        arrayList.add((Calendar)cal.clone()); 
         
         Intent intent = new Intent(this, AlarmReceivingAction.class);
-        intent.putExtra("alarm_message", "O'Doyle Rules!");
+//        intent.putExtra("alarm_message", "O'Doyle Rules!");
         // In reality, you would want to have a static variable for the request code instead of 192837
-        PendingIntent sender = PendingIntent.getBroadcast(this, 192837, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        sender = PendingIntent.getBroadcast(this, 192837, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         
         // Get the AlarmManager service
-        AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), sender);
+        am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+//        am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), sender);
         
-        Log.v("dbm" , "Main Activity Clocking: " + dateFormat.format(cal.getTime()) ); 
+//        setAlarm(am, sender, arrayList); 
+        
     }
     
-    public void setAlarm( ArrayList<Date> timeList )
+    public void setAlarm( AlarmManager alarmManager , PendingIntent sender , ArrayList<Calendar> timeList  )
     {
     	Calendar cal = Calendar.getInstance(); 
     	
-//    	Date closestTime;  
-//    	for(int i = 0; i < timeList.size(); i++)
-//    	{
-//    		if( closestTime > Math.abs(  - timeList.get(i)  ) )
-//    		{
-//    			
-//    		}
-//    	}
+    	int bestPos = 0; 
+    	long closestTime = cal.getTimeInMillis() - timeList.get(bestPos).getTimeInMillis(); 
+    	for(int i = 1; i < timeList.size(); i++)
+    	{
+    		Calendar currentCal = timeList.get(i); 
+    		if( closestTime > Math.abs( cal.getTimeInMillis() - currentCal.getTimeInMillis()   ) )
+    		{
+    			bestPos = i; 
+    			closestTime = cal.getTimeInMillis() - currentCal.getTimeInMillis(); 
+    		}
+    	}
+//    	alarmManager.set(AlarmManager.RTC_WAKEUP , cal.getTimeInMillis() , sender ); 
+    	
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+    	menu.add("Create Alarm"); 
+    	menu.add("Options"); 
+//        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
     
